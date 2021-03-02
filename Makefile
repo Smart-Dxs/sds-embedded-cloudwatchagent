@@ -17,6 +17,7 @@ LINUX_AMD64_BUILD = CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="${L
 LINUX_ARM64_BUILD = GOOS=linux GOARCH=arm64 go build -ldflags="${LDFLAGS}" -o $(BUILD_SPACE)/bin/linux_arm64
 WIN_BUILD = GOOS=windows GOARCH=amd64 go build -ldflags="${LDFLAGS}" -o $(BUILD_SPACE)/bin/windows_amd64
 DARWIN_BUILD = GO111MODULE=on GOOS=darwin GOARCH=amd64 go build -ldflags="${LDFLAGS}" -o $(BUILD_SPACE)/bin/darwin_amd64
+LINUX_ARMHF_BUILD = GOOS=linux GOARCH=arm GOARM=6 go build -ldflags="${LDFLAGS}" -o $(BUILD_SPACE)/bin/linux_armhf
 
 IMAGE = amazon/cloudwatch-agent:$(VERSION)
 DOCKER_BUILD_FROM_SOURCE = docker build -t $(IMAGE) -f ./amazon-cloudwatch-container-insights/cloudwatch-agent-dockerfile/source/Dockerfile
@@ -57,6 +58,7 @@ amazon-cloudwatch-agent: copy-version-file
 	$(LINUX_ARM64_BUILD)/amazon-cloudwatch-agent github.com/aws/amazon-cloudwatch-agent/cmd/amazon-cloudwatch-agent
 	$(WIN_BUILD)/amazon-cloudwatch-agent.exe github.com/aws/amazon-cloudwatch-agent/cmd/amazon-cloudwatch-agent
 	$(DARWIN_BUILD)/amazon-cloudwatch-agent github.com/aws/amazon-cloudwatch-agent/cmd/amazon-cloudwatch-agent
+	$(LINUX_ARMHF_BUILD)/amazon-cloudwatch-agent github.com/aws/amazon-cloudwatch-agent/cmd/amazon-cloudwatch-agent
 
 update-submodule:
 	git submodule update --init
@@ -66,6 +68,7 @@ cwagent-otel-collector: update-submodule
 	cd $(AOC_BASE_SPACE) && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="${AOC_LDFLAGS}" -o $(BUILD_SPACE)/bin/linux_amd64/cwagent-otel-collector $(AOC_IMPORT_PATH)/cmd/awscollector
 	cd $(AOC_BASE_SPACE) && CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -ldflags="${AOC_LDFLAGS}" -o $(BUILD_SPACE)/bin/linux_arm64/cwagent-otel-collector $(AOC_IMPORT_PATH)/cmd/awscollector
 	cd $(AOC_BASE_SPACE) && CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -ldflags="${AOC_LDFLAGS}" -o $(BUILD_SPACE)/bin/windows_amd64/cwagent-otel-collector.exe $(AOC_IMPORT_PATH)/cmd/awscollector
+	cd $(AOC_BASE_SPACE) && CGO_ENABLED=0 GOOS=linux GOARCH=armhf go build -ldflags="${AOC_LDFLAGS}" -o $(BUILD_SPACE)/bin/linux_armhf/cwagent-otel-collector $(AOC_IMPORT_PATH)/cmd/awscollector
 
 config-translator: copy-version-file
 	@echo Building config-translator
@@ -73,6 +76,7 @@ config-translator: copy-version-file
 	$(LINUX_ARM64_BUILD)/config-translator github.com/aws/amazon-cloudwatch-agent/cmd/config-translator
 	$(WIN_BUILD)/config-translator.exe github.com/aws/amazon-cloudwatch-agent/cmd/config-translator
 	$(DARWIN_BUILD)/config-translator github.com/aws/amazon-cloudwatch-agent/cmd/config-translator
+	$(LINUX_ARMHF_BUILD)/config-translator github.com/aws/amazon-cloudwatch-agent/cmd/config-translator
 
 start-amazon-cloudwatch-agent: copy-version-file
 	@echo Building start-amazon-cloudwatch-agent
@@ -80,6 +84,7 @@ start-amazon-cloudwatch-agent: copy-version-file
 	$(LINUX_ARM64_BUILD)/start-amazon-cloudwatch-agent github.com/aws/amazon-cloudwatch-agent/cmd/start-amazon-cloudwatch-agent
 	$(WIN_BUILD)/start-amazon-cloudwatch-agent.exe github.com/aws/amazon-cloudwatch-agent/cmd/start-amazon-cloudwatch-agent
 	$(DARWIN_BUILD)/start-amazon-cloudwatch-agent github.com/aws/amazon-cloudwatch-agent/cmd/start-amazon-cloudwatch-agent
+	$(LINUX_ARMHF_BUILD)/start-amazon-cloudwatch-agent github.com/aws/amazon-cloudwatch-agent/cmd/start-amazon-cloudwatch-agent
 
 amazon-cloudwatch-agent-config-wizard: copy-version-file
 	@echo Building amazon-cloudwatch-agent-config-wizard
@@ -87,6 +92,7 @@ amazon-cloudwatch-agent-config-wizard: copy-version-file
 	$(LINUX_ARM64_BUILD)/amazon-cloudwatch-agent-config-wizard github.com/aws/amazon-cloudwatch-agent/cmd/amazon-cloudwatch-agent-config-wizard
 	$(WIN_BUILD)/amazon-cloudwatch-agent-config-wizard.exe github.com/aws/amazon-cloudwatch-agent/cmd/amazon-cloudwatch-agent-config-wizard
 	$(DARWIN_BUILD)/amazon-cloudwatch-agent-config-wizard github.com/aws/amazon-cloudwatch-agent/cmd/amazon-cloudwatch-agent-config-wizard
+	$(LINUX_ARMHF_BUILD)/amazon-cloudwatch-agent-config-wizard github.com/aws/amazon-cloudwatch-agent/cmd/amazon-cloudwatch-agent-config-wizard
 
 config-downloader: copy-version-file
 	@echo Building config-downloader
@@ -94,6 +100,7 @@ config-downloader: copy-version-file
 	$(LINUX_ARM64_BUILD)/config-downloader github.com/aws/amazon-cloudwatch-agent/cmd/config-downloader
 	$(WIN_BUILD)/config-downloader.exe github.com/aws/amazon-cloudwatch-agent/cmd/config-downloader
 	$(DARWIN_BUILD)/config-downloader github.com/aws/amazon-cloudwatch-agent/cmd/config-downloader
+	$(LINUX_ARMHF_BUILD)/config-downloader github.com/aws/amazon-cloudwatch-agent/cmd/config-downloader
 
 fmt:
 	go fmt ./...
@@ -180,6 +187,25 @@ package-prepare-deb:
 	cp -rf $(BASE_SPACE)/Tools $(BUILD_SPACE)/
 	cp -rf $(BASE_SPACE)/packaging $(BUILD_SPACE)/
 
+	# armhf deb
+	mkdir -p $(BUILD_SPACE)/private/linux/armhf/deb/amazon-cloudwatch-agent-pre-pkg
+	cp $(BUILD_SPACE)/bin/linux_armhf/* $(BUILD_SPACE)/private/linux/armhf/deb/amazon-cloudwatch-agent-pre-pkg/
+	cp $(BASE_SPACE)/licensing/LICENSE $(BUILD_SPACE)/private/linux/armhf/deb/amazon-cloudwatch-agent-pre-pkg/
+	cp $(BASE_SPACE)/licensing/NOTICE $(BUILD_SPACE)/private/linux/armhf/deb/amazon-cloudwatch-agent-pre-pkg/
+	cp $(BASE_SPACE)/licensing/THIRD-PARTY-LICENSES $(BUILD_SPACE)/private/linux/armhf/deb/amazon-cloudwatch-agent-pre-pkg/
+	cp $(BASE_SPACE)/RELEASE_NOTES $(BUILD_SPACE)/private/linux/armhf/deb/amazon-cloudwatch-agent-pre-pkg/
+	cp $(BUILD_SPACE)/bin/CWAGENT_VERSION $(BUILD_SPACE)/private/linux/armhf/deb/amazon-cloudwatch-agent-pre-pkg/
+	cp $(BASE_SPACE)/packaging/dependencies/amazon-cloudwatch-agent-ctl $(BUILD_SPACE)/private/linux/armhf/deb/amazon-cloudwatch-agent-pre-pkg/
+	cp $(BASE_SPACE)/packaging/dependencies/amazon-cloudwatch-agent.service $(BUILD_SPACE)/private/linux/armhf/deb/amazon-cloudwatch-agent-pre-pkg/
+	cp $(BASE_SPACE)/cfg/commonconfig/common-config.toml $(BUILD_SPACE)/private/linux/armhf/deb/amazon-cloudwatch-agent-pre-pkg/
+	cp $(BASE_SPACE)/packaging/linux/amazon-cloudwatch-agent.conf $(BUILD_SPACE)/private/linux/armhf/deb/amazon-cloudwatch-agent-pre-pkg/
+	cp $(BASE_SPACE)/translator/config/schema.json $(BUILD_SPACE)/private/linux/armhf/deb/amazon-cloudwatch-agent-pre-pkg/amazon-cloudwatch-agent-schema.json
+	cp $(BASE_SPACE)/packaging/dependencies/cwagent-otel-collector.service $(BUILD_SPACE)/private/linux/armhf/deb/amazon-cloudwatch-agent-pre-pkg/
+	cp $(BASE_SPACE)/packaging/linux/cwagent-otel-collector.conf $(BUILD_SPACE)/private/linux/armhf/deb/amazon-cloudwatch-agent-pre-pkg/
+	cp $(AOC_BASE_SPACE)/config.yaml $(BUILD_SPACE)/private/linux/armhf/deb/amazon-cloudwatch-agent-pre-pkg/predefined-config-data
+	cp -rf $(BASE_SPACE)/Tools $(BUILD_SPACE)/
+	cp -rf $(BASE_SPACE)/packaging $(BUILD_SPACE)/
+
 package-prepare-win-zip:
 	# amd64 win
 	mkdir -p $(BUILD_SPACE)/private/windows/amd64/zip/amazon-cloudwatch-agent-pre-pkg
@@ -222,6 +248,7 @@ package-rpm: package-prepare-rpm
 package-deb: package-prepare-deb
 	ARCH=amd64 TARGET_SUPPORTED_ARCH=x86_64 PREPKGPATH="$(BUILD_SPACE)/private/linux/amd64/deb/amazon-cloudwatch-agent-pre-pkg" $(BUILD_SPACE)/Tools/src/create_deb.sh
 	ARCH=arm64 TARGET_SUPPORTED_ARCH=aarch64 PREPKGPATH="$(BUILD_SPACE)/private/linux/arm64/deb/amazon-cloudwatch-agent-pre-pkg" $(BUILD_SPACE)/Tools/src/create_deb.sh
+	ARCH=armhf TARGET_SUPPORTED_ARCH=aarch32 PREPKGPATH="$(BUILD_SPACE)/private/linux/armhf/deb/amazon-cloudwatch-agent-pre-pkg" $(BUILD_SPACE)/Tools/src/create_deb.sh
 
 .PHONY: package-win
 package-win: package-prepare-win-zip

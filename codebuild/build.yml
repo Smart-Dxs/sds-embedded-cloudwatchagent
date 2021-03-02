@@ -1,0 +1,19 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      golang: 1.15
+  pre_build:
+    commands:
+      - echo "Environment Variables:"
+      - printenv
+      #- apt-get update
+  build:
+    commands:
+      - cat go.mod
+      - make test build
+artifacts:
+  files:
+    - '**/*'
+  discard-paths: no
