@@ -8,8 +8,7 @@ phases:
     commands:
       - echo "Environment Variables:"
       - printenv
-      - apt-get update
-      - apt-get install rpm -y
+      - yum install -y rpmdevtools rpm-build
       #- apt-get update
   build:
     commands:
