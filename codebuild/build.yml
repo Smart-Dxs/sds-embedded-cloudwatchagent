@@ -8,6 +8,7 @@ phases:
     commands:
       - echo "Environment Variables:"
       - printenv
+      - apt install rpm -y
       #- apt-get update
   build:
     commands:
