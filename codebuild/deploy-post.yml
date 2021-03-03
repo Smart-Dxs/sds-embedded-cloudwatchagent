@@ -1,0 +1,23 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.7
+  pre_build:
+    commands:
+      - echo "Environment Variables:"
+      - printenv
+  build:
+    commands:
+      # Copy files to download bucket
+      #- aws s3 cp btutil_0.${CODEBUILD_BUILD_NUMBER}_armhf.deb s3://smartdxs-${ENVIRONMENT}-${NAME}-downloads/debian/armhf/
+      # - aws s3 cp btutil_0.${CODEBUILD_BUILD_NUMBER}_amd64.deb s3://smartdxs-${ENVIRONMENT}-${NAME}-downloads/debian/amd64/
+
+      # Update Latest files
+      - aws s3 cp amazon_clouddwatch_agent_armhf.deb s3://smartdxs-${ENVIRONMENT}-${NAME}-downloads/debian/armhf/amazon-clouddwatch-agent_latest_armhf.deb
+      # - aws s3 cp btutil_0.${CODEBUILD_BUILD_NUMBER}_amd64.deb s3://smartdxs-${ENVIRONMENT}-${NAME}-downloads/debian/amd64/btutil_latest_amd64.deb
+artifacts:
+  files:
+    - '**/*'
+  discard-paths: no

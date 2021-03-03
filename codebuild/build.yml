@@ -18,6 +18,9 @@ phases:
       - cd amazon-cloudwatch-agent
       - cat go.mod
       - make release
+      - cd ..
+      - cp amazon-cloudwatch-agent/build/bin/linux/armhf/amazon-cloudwatch-agent.deb amazon-cloudwatch-agent_armhf.deb
+      - rf -rf amazon-cloudwatch-agent/
 artifacts:
   files:
     - '**/*'
