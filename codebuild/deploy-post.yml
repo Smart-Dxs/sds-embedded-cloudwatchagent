@@ -15,7 +15,7 @@ phases:
       # - aws s3 cp btutil_0.${CODEBUILD_BUILD_NUMBER}_amd64.deb s3://smartdxs-${ENVIRONMENT}-${NAME}-downloads/debian/amd64/
 
       # Update Latest files
-      - aws s3 cp amazon_clouddwatch_agent_armhf.deb s3://smartdxs-${ENVIRONMENT}-${NAME}-downloads/debian/armhf/amazon-clouddwatch-agent_latest_armhf.deb
+      - aws s3 cp amazon-cloudwatch-agent_armhf.deb s3://smartdxs-${ENVIRONMENT}-${NAME}-downloads/debian/armhf/amazon-cloudwatch-agent_latest_armhf.deb
       # - aws s3 cp btutil_0.${CODEBUILD_BUILD_NUMBER}_amd64.deb s3://smartdxs-${ENVIRONMENT}-${NAME}-downloads/debian/amd64/btutil_latest_amd64.deb
 artifacts:
   files:
