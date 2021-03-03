@@ -1,0 +1,6 @@
+{
+    "Tags": {
+        "Environment": "stage",
+        "Service": "embedded-cloudwatchagent"
+    }
+}

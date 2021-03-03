@@ -1,0 +1,6 @@
+{
+    "Tags": {
+        "Environment": "dev",
+        "Service": "embedded-cloudwatchagent"
+    }
+}

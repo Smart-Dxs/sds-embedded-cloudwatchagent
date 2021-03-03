@@ -1,0 +1,30 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "Creates a S3 bucket to publish Embedded-CloudWatchAgent artifacts to.",
+    "Parameters": {
+        "Environment": {
+            "Type": "String"
+        },
+        "Name": {
+            "Type": "String"
+        },
+        "PipelineS3BucketName": {
+            "Type": "String"
+        },
+        "PipelineKmsKeyArn": {
+            "Type": "String"
+        }
+    },
+    "Resources": {
+        "S3BucketDownloads": {
+            "Type": "AWS::S3::Bucket",
+            "DeletionPolicy": "Retain",
+            "UpdateReplacePolicy": "Retain",
+            "Properties": {
+                "BucketName": {
+                    "Fn::Sub": "smartdxs-${Environment}-${Name}-downloads"
+                }
+            }
+        }
+    }
+}
