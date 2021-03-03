@@ -8,7 +8,7 @@ phases:
     commands:
       - echo "Environment Variables:"
       - printenv
-      - yum install -y rpmdevtools rpm-build
+      - apt install rpm rpmdev -y
   build:
     commands:
       - cat go.mod
