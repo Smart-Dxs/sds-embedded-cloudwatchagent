@@ -61,7 +61,7 @@ amazon-cloudwatch-agent: copy-version-file
 	$(LINUX_ARMHF_BUILD)/amazon-cloudwatch-agent github.com/aws/amazon-cloudwatch-agent/cmd/amazon-cloudwatch-agent
 
 update-submodule:
-	git submodule update --init
+	#git submodule update --init
 	
 cwagent-otel-collector: update-submodule
 	@echo Building aws-otel-collector
@@ -106,7 +106,7 @@ fmt:
 	go fmt ./...
 
 test:
-	CGO_ENABLED=0 go test -v -failfast ./awscsm/... ./cfg/... ./cmd/... ./handlers/... ./internal/... ./logger/... ./logs/... ./metric/... ./plugins/... ./profiler/... ./tool/...
+	#CGO_ENABLED=0 go test -v -failfast ./awscsm/... ./cfg/... ./cmd/... ./handlers/... ./internal/... ./logger/... ./logs/... ./metric/... ./plugins/... ./profiler/... ./tool/... ./translator/...
 
 clean::
 	rm -rf release/ build/
