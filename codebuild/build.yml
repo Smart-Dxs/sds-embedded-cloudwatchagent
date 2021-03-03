@@ -4,14 +4,18 @@ phases:
   install:
     runtime-versions:
       golang: 1.14
+    commands:
+      - apt update -y
+      - apt install rpm -y
+      - git clone https://github.com/aws/amazon-cloudwatch-agent
   pre_build:
     commands:
       - echo "Environment Variables:"
       - printenv
-      - apt update -y
-      - apt install rpm -y
+      - cp Makefile amazon-cloudwatch-agent/Makefile
   build:
     commands:
+      - cd amazon-cloudwatch-agent
       - cat go.mod
       - make release
 artifacts:
